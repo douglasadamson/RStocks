@@ -1,10 +1,10 @@
-Symbol,ShortName
-AAPL,Apple
-AMZN,Amazon
-FB,Facebook
-GE,GE
-GOOG,Google
-MCD,McDonalds
-MSFT,Microsoft
-CERN,Cerner
-DATA, Tableau
+Symbol,Name,Favorites
+AAPL,Apple,1
+AMZN,Amazon,1
+FB,Facebook,1
+GE,GE,1
+GOOG,Google,1
+MCD,McDonalds,1
+MSFT,Microsoft,1
+CERN,Cerner,1
+DATA,Tableau,1
