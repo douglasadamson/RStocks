@@ -2,12 +2,19 @@ library(readr)
 #
 # Ultimately, get this data from a service
 #
-getTickers <- function(whichList) {
-  # Which Symbol list
-  file = ifelse(whichList == "nasdaq100", "./nasdaq100list.csv", "ticker.csv")
-  csv <- read_csv(file, col_names = TRUE)
+getTickers <- function(index) {
   
-  # Put into aplhabetical order
+  # Which Index?
+  filename = switch(index,
+                "nasdaq"    = "nasdaq100.csv",
+                "nasdaq100" = "nasdaq100.csv",
+                "favorites" = "ticker.csv",
+                "ticker.csv")
+  
+  csv <- read_csv(filename, col_names = TRUE)
+  
+  # Put into aplhabetical order and put favorites at top
   df <- csv[order(-csv$Favorites, csv$Symbol),]
+  
   return(df)
 }
