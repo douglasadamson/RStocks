@@ -7,7 +7,7 @@ library(ggplot2)
 # Plot this ticker from for date range
 # 
 plotTicker <- function(ticker, closeValues) {
-  # Find maximum 
+  # Find maximums & minimums
   maxClose = max(closeValues$Close)
   minClose = min(closeValues$Close)
   maxIndex = which(closeValues$Close == maxClose)
@@ -16,29 +16,32 @@ plotTicker <- function(ticker, closeValues) {
   minDate = closeValues$Date[minIndex]
   
   # Create the plot and decorate
-  p <- ggplot(closeValues, aes(x=Date, y=Close)) + 
+  p <- ggplot(closeValues, aes(Date, Close)) + 
     labs(title=ticker, x="Date", y="Close Value") + 
     scale_y_continuous(labels = scales::dollar) +
     scale_x_date(date_labels = "%b %d, %Y", date_minor_breaks = "1 week") +
     scale_color_manual(values = c("red", "blue")) +
     geom_line() + 
     geom_point(aes(x=Date, y=Close), color="blue") +
-    geom_label(aes(x=Date, y=Close, label = ifelse(Close == maxClose, paste("High:", Close, "\n", Date), NA)), nudge_x=-3.0, show.legend=FALSE) +
-    geom_label(aes(x=Date, y=Close, label = ifelse(Close == minClose, paste("Low: ", Close, "\n", Date), NA)), nudge_x=3.0, show.legend=FALSE)
+    geom_label(aes(x=Date, y=Close, label = ifelse(Close == maxClose, paste("High:", Close, "\n", Date), NA)), show.legend=FALSE) +
+    geom_label(aes(x=Date, y=Close, label = ifelse(Close == minClose, paste("Low: ", Close, "\n", Date), NA)), show.legend=FALSE)
   
-  # Get Plot Ranges for Date and Close (same as min/max Close and min/max Date)
+# Get Plot Ranges for Date and Close (same as min/max Close and min/max Date)
 #  xRange <- ggplot_build(p)$layout$panel_ranges[[1]]$x.range
 #  yRange <- ggplot_build(p)$layout$panel_ranges[[1]]$y.range
   
   
   # Add some lines down to axis
-#  p <- p +
-#    geom_segment(data = closeValues, aes(x = maxDate, y = maxClose, xend = maxDate, yend = minClose), color="red", linetype="dashed", alpha = 0.25) +
-#    geom_segment(data = closeValues, aes(x = minDate, y = maxClose, xend = maxDate, yend = maxClose), color="red", linetype="dashed", alpha = 0.25)
+#  p <- p + geom_segment(data = closeValues, aes(x = maxDate, y = maxClose, xend = maxDate, yend = 0), color="red", linetype="dashed")
+#  geom_segment(data = closeValues, aes(x = maxDate, y = maxClose, xend = maxDate, yend = minClose), color="red", linetype="dashed") +
+#  geom_segment(data = closeValues, aes(x = maxDate, y = maxClose, xend = minDate, yend = maxClose), color="red", linetype="dashed", alpha = 0.25)
+    
   
-  p <- p + geom_hline(data=closeValues, aes(yintercept=maxClose, color="green"), linetype="dashed", show.legend=FALSE)
-  p <- p + geom_hline(data=closeValues, aes(yintercept=minClose, color="yellow"), linetype="dashed", show.legend=FALSE)
-#  p <- p + geom_vline(data = closeValues, aes(xintercept=maxDate, color="red"), linetype="dashed")
+# hline and vlines from max and min values to axis
+#  p <- p + geom_hline(data=closeValues, aes(yintercept=maxClose), linetype="dashed", show.legend=FALSE, color="purple")
+#  p <- p + geom_hline(data=closeValues, aes(yintercept=minClose), linetype="dashed", show.legend=FALSE,color="red")
+#  p <- p + geom_vline(data = closeValues, aes(x=Date, xintercept=as.numeric(Date[maxIndex])), linetype="dashed", show.legend=FALSE, color="purple")
+#  p <- p + geom_vline(data = closeValues, aes(x=Date, xintercept=as.numeric(Date[minIndex])), linetype="dashed", show.legend=FALSE, color="purple")
     
   return(p)
 }
