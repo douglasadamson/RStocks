@@ -6,8 +6,8 @@ getTickers <- function(index) {
   
   # Which Index?
   filename = switch(index,
-                "nasdaq"    = "nasdaq100.csv",
-                "nasdaq100" = "nasdaq100.csv",
+                "nasdaq"    = "nasdaq100list.csv",
+                "nasdaq100" = "nasdaq100list.csv",
                 "favorites" = "ticker.csv",
                 "ticker.csv")
   

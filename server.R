@@ -1,29 +1,51 @@
 library(shiny)
+source("yahooQuotes.R")
+source("quandlQuotes.R")
+source("plotTicker.R")
+
 server <- function(input, output) {
   #
   # Inputs
   #
+  currentMarket <- reactive ({switch (input$radio,
+                             1 : "NASDAQ100",
+                             2: "S&P500",
+                             3: "AMEX",
+                             "NASDAQ100")
+  })
+  
   dataInput <- reactive ({
-    currentValues <- quandl(input$ticker, input$dateRange[1], input$dateRange[2])
+    start = input$dateRange[1]
+    end = input$dateRange[2]
+    if (start > end) {
+      start = end
+      end = input$dateRange[1]
+    }
+#    news <- yahooNews(input$ticker)
+    quandl(input$ticker, start, end)
+    
   })
   
   dataQuote <- reactive ({
-    quote <- yahooQuote(input$ticker)
+    yahooQuote(input$ticker)
   })
   
   historicQuote <- reactive({
-    hquote <- historicYahooQuote(input$ticker)
+    historicYahooQuote(input$ticker)
   })
   
-  compQuote <- reactive({
-    isolate({cquote <- yahooBatch()})
-  })
+#  compQuote <- reactive ({
+#    yahooBatch()
+#  })
   
   #
   # Outputs
   #
   output$tickerPlot <- renderPlot(
-      plotTicker(input$ticker, dataInput())
+#      plotTicker(input$ticker, isolate(dataInput()))
+    # todo: add "submit" button and isolate(submit button)
+#    plotTicker(input$ticker, dataInput())
+    plotTicker(input$ticker, dataInput())
     )
   
   output$tickerTable <- renderTable(
@@ -35,6 +57,6 @@ server <- function(input, output) {
   )
   
   output$compTable <- renderTable(
-    compQuote(), bordered = TRUE, align = 'c', spacing = 's', striped = TRUE
+    yahooBatch(), bordered = TRUE, align = 'c', spacing = 's', striped = TRUE
   )
 }

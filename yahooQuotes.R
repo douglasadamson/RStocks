@@ -1,4 +1,7 @@
+library(tidyverse)
 library(readr)
+library(xml2)
+source("getTickers.R")
 
 #
 # Yahoo Constants
@@ -13,7 +16,7 @@ yahooDF <- data.frame(Names = c("Open", "Previous Close", "Ask", "Bid", "Yield",
 #
 yahooBatch <- function() {
   # Exchange Ticker Symbols from CSV 
-  TickerDF <- read_csv("./ticker.csv", col_names = TRUE)
+  TickerDF <- getTickers("favorites")
   
   # Get some data from Yahoo Finance
   stockList <- paste(TickerDF$Symbol, collapse = ",")
@@ -21,7 +24,7 @@ yahooBatch <- function() {
   sendURL <- paste(yahooFinanceURL, "?s=", stockList, "&f=", stockArgs, sep="")
   
   # Read the data, calculate some values
-  quotes <- read_csv(sendURL, col_names = yahooNames)
+  quotes <- read_csv(sendURL, col_names = as.vector(yahooDF$Names))
   Ticker <- TickerDF$Symbol
   quotes <- cbind(Ticker, quotes)
   quotes$Delta <- ((quotes$Last - quotes$Open) / quotes$Open) * 100
@@ -48,4 +51,35 @@ yahooQuote <- function(ticker) {
   URL <- paste(yahooFinanceURL, "?s=", ticker, "&f=", args, sep="")
   quote <- read_csv(URL, col_names = columns)
   return(quote)
+}
+
+#
+# Get news for this stock
+#
+yahooNews <- function(ticker) {
+  #
+  # Get the RSS feed for this ticker
+  #
+  yahooNewsURL <- "http://feeds.finance.yahoo.com/rss/2.0/headline?s="
+  yahooTail <- "&region=US&lang=en-US"
+  yahooMsg = paste(yahooNewsURL, ticker, yahooTail, sep="")
+  news <- read_xml(yahooMsg)
+  
+  #
+  # Parse the RSS feed into text (delete <tags>)
+  #
+  titles <- news %>% xml_find_all(".//title") %>% xml_text()
+  descriptions <- news %>% xml_find_all(".//description") %>% xml_text()
+  links <- news %>% xml_find_all(".//link") %>% xml_text()
+  pubDates <- news %>% xml_find_all(".//pubDate") %>% xml_text()
+  
+  #
+  # Build a data frame
+  #
+  newsDF <- data.frame(Titles=titles[2:(length(titles)-1)], Descriptions=descriptions[2:length(descriptions)], Links=links[2:(length(links)-1)], PubDates = pubDates)
+  
+  #
+  # Return the dataframe with headers
+  #
+  return(newsDF)
 }
