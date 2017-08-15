@@ -2,6 +2,7 @@
 # Plot Date x Close$
 #
 library(ggplot2)
+library(ggrepel)
 
 #
 # Plot this ticker from for date range
@@ -23,8 +24,8 @@ plotTicker <- function(ticker, closeValues) {
     scale_color_manual(values = c("red", "blue")) +
     geom_line() + 
     geom_point(aes(x=Date, y=Close), color="blue") +
-    geom_label(aes(x=Date, y=Close, label = ifelse(Close == maxClose, paste("High:", Close, "\n", Date), NA)), show.legend=FALSE) +
-    geom_label(aes(x=Date, y=Close, label = ifelse(Close == minClose, paste("Low: ", Close, "\n", Date), NA)), show.legend=FALSE)
+    geom_label_repel(aes(x=Date, y=Close, label = ifelse(Close == maxClose, paste("High:", Close, "\n", Date), NA)), show.legend=FALSE) +
+    geom_label_repel(aes(x=Date, y=Close, label = ifelse(Close == minClose, paste("Low: ", Close, "\n", Date), NA)), show.legend=FALSE)
   
 # Get Plot Ranges for Date and Close (same as min/max Close and min/max Date)
 #  xRange <- ggplot_build(p)$layout$panel_ranges[[1]]$x.range
@@ -42,6 +43,13 @@ plotTicker <- function(ticker, closeValues) {
 #  p <- p + geom_hline(data=closeValues, aes(yintercept=minClose), linetype="dashed", show.legend=FALSE,color="red")
 #  p <- p + geom_vline(data = closeValues, aes(x=Date, xintercept=as.numeric(Date[maxIndex])), linetype="dashed", show.legend=FALSE, color="purple")
 #  p <- p + geom_vline(data = closeValues, aes(x=Date, xintercept=as.numeric(Date[minIndex])), linetype="dashed", show.legend=FALSE, color="purple")
-    
+  
   return(p)
+}
+
+drawHover <- function(e) {
+  x = round(as.numeric(e$x))
+  y = round(as.numeric(e$y))
+  date = as.Date(x, origin = "1970-01-01") 
+  print(paste0("Date=", format(date, "%a %b %d, %Y"), "\nClose=$", y))
 }

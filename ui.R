@@ -12,11 +12,12 @@ ui <- fluidPage(theme=shinytheme("superhero"),
   wellPanel(
     fluidRow(
       column(3,
-             radioButtons(inputId = "radio", label = "Select Market",
-                          choices = list("NASDAQ100" = 1, "S&P500" = 2, "AMEX" = 3), 
-                          selected = 1, inline = TRUE), 
-             hr(),
              selectInput(inputId = "ticker", label = "Enter Ticker:", choices = as.vector(choicesDF$Symbol)),
+             tags$hr(),
+#             radioButtons(inputId = "radio", label = "Quick Range:",
+#                          choices = list("1 mo" = 1, "3 mo" = 2, "6 mo" = 3, "1 yr" = 4, "2 yr" = 5), 
+#                          selected = 1, inline = TRUE), 
+#             tags$hr(),
              dateRangeInput(inputId = "dateRange", 
                             label = "Date Range:", 
                             start = Sys.Date() - 30,
@@ -24,46 +25,34 @@ ui <- fluidPage(theme=shinytheme("superhero"),
                             min = "1970-01-01",
                             max = Sys.Date(),
                             format = "yyyy-mm-dd"), 
-             hr(),
-             h4("Today's Values"),
-             tableOutput("tickerTable"), 
-             hr(),
-             h4("52 Week Values"),
-             tableOutput("historicValues")
+              tags$hr(),
+              tags$h5("Today's Values"),
+              tableOutput("tickerTable"),
+              tags$hr(),
+              tags$h5("52 Week Values"),
+              tableOutput("historicValues")
              ),
       column(9, 
-             plotOutput("tickerPlot")
+             plotOutput("tickerPlot", hover = "plot_hover")
             )
     )
-  ), style = "padding: 20px;",
+  ), style = "padding: 10px;",
+  wellPanel (style = "overflow-y:scroll; max-height: 500px",
+    fluidRow (
+      column (width = 6,
+             htmlOutput("newsHTML")
+             ),
+      column(width=6,
+             htmlOutput("cnnHTML")
+             )
+    )
+  ),
   wellPanel (
     fluidRow(
       column(12,
-             h3("Comparable Companies"),
+             tags$h4("My Favorites"),
              tableOutput("compTable")
-             )
+      )
     )
   )
 )
-#  sidebarLayout(
-#    sidebarPanel(
-#      selectInput(inputId = "ticker", label = "Enter Ticker:", choices = stockTicker),
-#      dateRangeInput(inputId = "dateRange", 
-#               label = "Date Range:", 
-#                start = Sys.Date() - 30,
-#                end = Sys.Date(),
-#                format = "yyyy-mm-dd"),
-      # Get a daily quote
-#      h4("Today's Values"),
-#      tableOutput("tickerTable"),
-      # Get a 52 week quote
-#      h4("52 Week Values"),
-#      tableOutput("historicValues")
-#    ),
-#    mainPanel(
-#      plotOutput("tickerPlot")
-#    )
-#  ),
-#  h1("Comparable Companies"),
-#  tableOutput("compTable")
-#)

@@ -11,7 +11,7 @@ getTickers <- function(index) {
                 "favorites" = "ticker.csv",
                 "ticker.csv")
   
-  csv <- read_csv(filename, col_names = TRUE)
+  csv <- read_csv(filename, col_names = TRUE, col_types="cci")
   
   # Put into aplhabetical order and put favorites at top
   df <- csv[order(-csv$Favorites, csv$Symbol),]

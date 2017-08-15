@@ -2,31 +2,24 @@ library(shiny)
 source("yahooQuotes.R")
 source("quandlQuotes.R")
 source("plotTicker.R")
+source("cnnRSSFeed.R")
 
 server <- function(input, output) {
   #
-  # Inputs
+  # Reactive Inputs
   #
-  currentMarket <- reactive ({switch (input$radio,
-                             1 : "NASDAQ100",
-                             2: "S&P500",
-                             3: "AMEX",
-                             "NASDAQ100")
-  })
   
-  dataInput <- reactive ({
+  dataInput <- reactive({
     start = input$dateRange[1]
     end = input$dateRange[2]
     if (start > end) {
       start = end
       end = input$dateRange[1]
     }
-#    news <- yahooNews(input$ticker)
     quandl(input$ticker, start, end)
-    
   })
   
-  dataQuote <- reactive ({
+  dataQuote <- reactive({
     yahooQuote(input$ticker)
   })
   
@@ -34,29 +27,70 @@ server <- function(input, output) {
     historicYahooQuote(input$ticker)
   })
   
-#  compQuote <- reactive ({
-#    yahooBatch()
-#  })
+  newsQuote <- reactive({
+    news <- yahooNews(input$ticker)
+    str <- tags$h4(paste0("Latest News for ", input$ticker))
+    for (i in 1:nrow(news)) {
+      title <- news$Titles[i]
+      date <- gsub('+0000', "", news$PubDates[i], fixed = TRUE)
+      desc <- news$Descriptions[i]
+      link <- news$Links[i]
+      str <- paste(str, 
+                  tags$a(href = link, title), 
+                  tags$small(date),
+                  tags$br(),
+                  tags$p(tags$em(tags$small(desc)))
+                  )
+    }
+    return(str)
+  })
   
   #
-  # Outputs
+  # CNN RSS feed for top stories
   #
-  output$tickerPlot <- renderPlot(
-#      plotTicker(input$ticker, isolate(dataInput()))
-    # todo: add "submit" button and isolate(submit button)
-#    plotTicker(input$ticker, dataInput())
-    plotTicker(input$ticker, dataInput())
-    )
+  cnnRSSQuote <- reactive({
+    news <- cnnRSS()
+    str <- tags$h4("Top Stories from CNN")
+    for (i in 1:nrow(news)) {
+      title <- news$Titles[i]
+      date <- gsub('+0000', "", news$PubDates[i], fixed = TRUE) # truncate seconds from dates
+      desc <- gsub("(<img src=\"http://(.*)/>)", '', news$Descriptions[i]) # Get rid of image tags in descriptions
+      link <- news$Links[i]
+      str <- paste(str, 
+                   tags$a(href = link, title), 
+                   tags$small(date),
+                   tags$br(),
+                   tags$p(tags$em(tags$small(desc)))
+      )
+    }
+    return(str)
+  })
   
-  output$tickerTable <- renderTable(
-    dataQuote(), bordered = TRUE, align = 'c', spacing = 's'
-  )
+  myHover <- reactive({
+    drawHover(input$plot_hover)
+  })
   
-  output$historicValues <- renderTable(
-    historicQuote(), bordered = TRUE, align = 'c', spacing = 's'
-  )
+  #
+  # Reactive Outputs 
+  #
+  output$tickerPlot <- renderPlot({plotTicker(input$ticker, dataInput())})
   
-  output$compTable <- renderTable(
-    yahooBatch(), bordered = TRUE, align = 'c', spacing = 's', striped = TRUE
-  )
+  output$tickerTable <- renderTable({dataQuote()}, bordered = TRUE, align = 'c', spacing = 's')
+  
+  output$historicValues <- renderTable({historicQuote()}, bordered = TRUE, align = 'c', spacing = 's')
+  
+  output$compTable <- renderTable({yahooBatch()}, bordered = TRUE, align = 'c', spacing = 'xs', striped = TRUE)
+  
+  output$newsHTML <- renderText({newsQuote()})
+  
+  output$cnnHTML <- renderText({cnnRSSQuote()})
+  
+  output$info <- renderText({
+    x = round(as.numeric(input$plot_hover$x))
+    y = round(as.numeric(input$plot_hover$y))
+    date = as.Date(x, origin = "1970-01-01") 
+    paste0("Date=", format(date, "%a %b %d, %Y"), "\nClose=$", y)
+  })
 }
+
+

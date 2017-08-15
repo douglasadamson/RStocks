@@ -9,16 +9,16 @@ library(readr)
 #
 quandl <- function(ticker, start_date, end_date) {
   # Construct the service call
-  quandlArgs <- paste("start_date=", start_date, "&", "end_data=", end_date, "&ord=asc", sep="")
-  tickerArg = paste(ticker, ".csv", sep="")
+  quandlArgs <- paste("start_date=", start_date, "&", "end_data=", end_date, "&ord=asc", sep = "")
+  tickerArg = paste(ticker, ".csv", sep = "")
   quandlUrl <- "https://www.quandl.com/api/v3/datasets/WIKI/"
-  quandlSendURL <- paste(quandlUrl, tickerArg, "?", quandlArgs, sep="")
+  quandlSendURL <- paste(quandlUrl, tickerArg, "?", quandlArgs, sep = "")
   
   # Call the service returning a CSV
-  quandlCSV <- read_csv(quandlSendURL, col_names=TRUE)
+  quandlCSV <- read_csv(quandlSendURL, col_names = TRUE, col_types = "Ddddddddddddd", na = c(NA, "", " "))
   
-  # Convert everything to Date objects
-  quandlCSV$Date <- as.Date(quandlCSV$Date, format = "%Y-%m-%d")
+  # Format Date
+  quandlCSV$Date <- as.Date(quandlCSV$Date, format = "%Y-%m-%d", origin = "1970-01-01")
   
   return(quandlCSV)
 }
