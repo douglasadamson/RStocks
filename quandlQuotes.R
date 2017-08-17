@@ -13,12 +13,12 @@ quandl <- function(ticker, start_date, end_date) {
   tickerArg = paste(ticker, ".csv", sep = "")
   quandlUrl <- "https://www.quandl.com/api/v3/datasets/WIKI/"
   quandlSendURL <- paste(quandlUrl, tickerArg, "?", quandlArgs, sep = "")
-  
-  # Call the service returning a CSV
+
+  # Call the service returning a tibble from the CSV
   quandlCSV <- read_csv(quandlSendURL, col_names = TRUE, col_types = "Ddddddddddddd", na = c(NA, "", " "))
-  
+
   # Format Date
   quandlCSV$Date <- as.Date(quandlCSV$Date, format = "%Y-%m-%d", origin = "1970-01-01")
-  
+
   return(quandlCSV)
 }

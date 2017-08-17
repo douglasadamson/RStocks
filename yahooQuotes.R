@@ -4,7 +4,7 @@ library(xml2)
 source("getTickers.R")
 
 #
-# Yahoo API documentation: http://wern-ancheta.com/blog/2015/04/05/getting-started-with-the-yahoo-finance-api/
+# INFO: Yahoo API documentation: http://wern-ancheta.com/blog/2015/04/05/getting-started-with-the-yahoo-finance-api/
 #
 
 #
@@ -30,11 +30,13 @@ yahooBatch <- function() {
   sendURL   <- paste(yahooFinanceURL, "?s=", stockList, "&f=", stockArgs, sep = "")
 
   #
-  # Read the data
+  # Read the data - data contains empty values, so suppress the warnings of parsing failures! Yes, the data has empty fields and I can't fix them
   #
-  quotes <- read_csv(sendURL, col_names = yahooDF$Names[1:12], col_types = paste(yahooDF$Types[1:12], collapse = ""), na = c(NA, " ", ""))
+  suppressWarnings(
+    quotes <- read_csv(sendURL, col_names = yahooDF$Names[1:12], col_types = paste(yahooDF$Types[1:12], collapse = ""), na = c(NA, " ", ""))
+  )
 
-    # Add ticket sysmbol for table and day's high/low delta
+  # Add ticket sysmbol for table and day's high/low delta
   quotes$Ticker <- as.character(TickerDF$Symbol)
   quotes$Delta  <- as.double(((quotes$Last - quotes$Open) / quotes$Open) * 100)
 

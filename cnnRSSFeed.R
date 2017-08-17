@@ -11,7 +11,7 @@ cnnRSS <- function() {
   #cnnRSSURL <- "http://rss.cnn.com/rss/money_topstories.rss"
   cnnRSSURL <- "http://rss.cnn.com/rss/money_mostpopular.rss"
   news <- read_xml(cnnRSSURL)
-  
+
   #
   # Parse the RSS feed into text (delete <tags>)
   #
@@ -19,17 +19,17 @@ cnnRSS <- function() {
   descriptions <- news %>% xml_find_all(".//description") %>% xml_text() %>% as.character()
   links        <- news %>% xml_find_all(".//link") %>% xml_text() %>% as.character()
   pubDates     <- news %>% xml_find_all(".//pubDate") %>% xml_text() %>% as.character()
-  
+
   #
   # Build a data frame
   #
-  newsDF <- data_frame(Titles = titles, 
-                       Descriptions = descriptions, 
-                       Links = links, 
+  newsDF <- data_frame(Titles = titles,
+                       Descriptions = descriptions,
+                       Links = links,
                        PubDates = pubDates)
-  
-  
-  
+
+
+
   #
   # Return the dataframe with headers
   #

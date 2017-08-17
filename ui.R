@@ -25,18 +25,18 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                             min = "1970-01-01",
                             max = Sys.Date(),
                             format = "yyyy-mm-dd"),
-              tags$hr(),
-              tags$h5("Today's Values"),
+#              tags$hr(),
+              tags$h4("Today's Values", align = "center"),
               tableOutput("tickerTable"),
-              tags$hr(),
-              tags$h5("52 Week Values"),
+#              tags$hr(),
+              tags$h4("52 Week Values", align = "center"),
               tableOutput("historicValues")
              ),
       column(9,
              plotOutput("tickerPlot", hover = "plot_hover")
             )
     )
-  ), style = "padding: 10px;",
+  ),
   wellPanel(
     fluidRow(
       column(width = 9, offset = 3,
@@ -44,7 +44,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
       )
     )
   ),
-  wellPanel(style = "overflow-y:scroll; max-height: 500px",
+  wellPanel(style = "overflow-y:scroll; max-height: 400px",
     fluidRow(
       column(width = 6,
              htmlOutput("newsHTML")

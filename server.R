@@ -8,7 +8,6 @@ server <- function(input, output) {
   #
   # Reactive Inputs
   #
-
   dataInput <- reactive({
     start = input$dateRange[1]
     end = input$dateRange[2]
@@ -29,7 +28,7 @@ server <- function(input, output) {
 
   newsQuote <- reactive({
     news <- yahooNews(input$ticker)
-    str <- tags$h4(paste0("Latest News for ", input$ticker))
+    str <- tags$h4(paste0("Latest Yahoo News for ", input$ticker))
     for (i in 1:nrow(news)) {
       title <- news$Titles[i]
       date <- gsub('+0000', "", news$PubDates[i], fixed = TRUE)
@@ -46,11 +45,11 @@ server <- function(input, output) {
   })
 
   #
-  # CNN RSS feed for top stories
+  # CNN RSS feed for top/popular stories
   #
   cnnRSSQuote <- reactive({
     news <- cnnRSS()
-    str <- tags$h4("Top Stories from CNN")
+    str <- tags$h4("Popular Stories from CNN")
     for (i in 1:nrow(news)) {
       title <- news$Titles[i]
       date <- gsub('+0000', "", news$PubDates[i], fixed = TRUE) # truncate seconds from dates

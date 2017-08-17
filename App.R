@@ -1,10 +1,15 @@
-# Test
-#source(yahooQuotes.R)
-#ticker <- 'AAPL'
-#news = yahooNews(ticker)
-#myYahooQuote <- yahooQuote(ticker)
-#myYahooBatch <- yahooBatch()
-#plotTicker("AAPL", "2017-01-01", "2017-07-17")
+#
+# Build the UI and Server components
+#
+source(ui.R)
+source(server.R)
 
+#
 # Build a Shiny App
-shinyApp(ui = ui, server = server)
+#
+app <- shinyApp(ui = ui, server = server)
+
+#
+# Run it
+#
+runApp(app)
