@@ -1,8 +1,9 @@
 #
-# Plot Date x Close$
+# Create plots of trade information over time
 #
 library(ggplot2)
 library(ggrepel)
+library(tidyverse)
 
 #
 # Plot this ticker from for date range
@@ -12,6 +13,7 @@ plotTicker <- function(ticker, closeValues) {
   # Get Plot Ranges for Date and Close (same as min/max Close and min/max Date)
   #  xRange <- ggplot_build(p)$layout$panel_ranges[[1]]$x.range
   #  yRange <- ggplot_build(p)$layout$panel_ranges[[1]]$y.range
+  #
   maxClose = max(closeValues$Close)
   minClose = min(closeValues$Close)
 
@@ -29,6 +31,9 @@ plotTicker <- function(ticker, closeValues) {
   return(p)
 }
 
+#
+# Plot Daily Trade Volumes
+#
 plotVolume <- function(ticker, closeValues) {
   p <- ggplot(closeValues, aes(Date, Volume)) +
     labs(title = paste(ticker, " Daily Volumes"), x = "", y = "Volume") +
@@ -40,6 +45,9 @@ plotVolume <- function(ticker, closeValues) {
   return(p)
 }
 
+#
+# Draw price and date when hovering over points in graph (experimental)
+#
 drawHover <- function(e) {
   x = round(as.numeric(e$x))
   y = round(as.numeric(e$y))

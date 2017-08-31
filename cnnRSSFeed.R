@@ -9,8 +9,8 @@ cnnRSS <- function() {
   # Get the RSS news feed from CNN
   #
   #cnnRSSURL <- "http://rss.cnn.com/rss/money_topstories.rss"
-  cnnRSSURL <- "http://rss.cnn.com/rss/money_mostpopular.rss"
-  news <- read_xml(cnnRSSURL)
+  cnnRSSURL  <- "http://rss.cnn.com/rss/money_mostpopular.rss"
+  news       <- read_xml(cnnRSSURL)
 
   #
   # Parse the RSS feed into text (delete <tags>)
@@ -27,9 +27,6 @@ cnnRSS <- function() {
                        Descriptions = descriptions,
                        Links = links,
                        PubDates = pubDates)
-
-
-
   #
   # Return the dataframe with headers
   #

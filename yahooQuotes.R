@@ -51,10 +51,10 @@ yahooBatch <- function() {
 # Get a short quote for this ticker
 #
 historicYahooQuote <- function(ticker) {
-  args <- paste(c("k", "j", "d", "y"), collapse = "")
+  args    <- paste(c("k", "j", "d", "y"), collapse = "")
   columns <- c("High", "Low", "Dividend", "Yield")
-  URL <- paste(yahooFinanceURL, "?s=", ticker, "&f=", args, sep = "")
-  quote <- read_csv(URL, col_names = as.vector(columns), col_types = "dddd")
+  URL     <- paste(yahooFinanceURL, "?s=", ticker, "&f=", args, sep = "")
+  quote   <- read_csv(URL, col_names = as.vector(columns), col_types = "dddd")
   return(quote)
 }
 
@@ -62,10 +62,10 @@ historicYahooQuote <- function(ticker) {
 # Get historic quote for this ticker
 #
 yahooQuote <- function(ticker) {
-  args <- paste(c("o", "l1", "h", "g"), collapse = "")
+  args    <- paste(c("o", "l1", "h", "g"), collapse = "")
   columns <- c("Open", "Last", "High", "Low")
-  URL <- paste(yahooFinanceURL, "?s=", ticker, "&f=", args, sep = "")
-  quote <- read_csv(URL, col_names = as.vector(columns), col_types = "dddd")
+  URL     <- paste(yahooFinanceURL, "?s=", ticker, "&f=", args, sep = "")
+  quote   <- read_csv(URL, col_names = as.vector(columns), col_types = "dddd")
   return(quote)
 }
 
@@ -77,17 +77,17 @@ yahooNews <- function(ticker) {
   # Get the RSS feed for this ticker
   #
   yahooNewsURL <- "http://feeds.finance.yahoo.com/rss/2.0/headline?s="
-  yahooTail <- "&region=US&lang=en-US"
-  yahooMsg <- paste(yahooNewsURL, ticker, yahooTail, sep = "")
-  news <- read_xml(yahooMsg)
+  yahooTail    <- "&region=US&lang=en-US"
+  yahooMsg     <- paste(yahooNewsURL, ticker, yahooTail, sep = "")
+  news         <- read_xml(yahooMsg)
 
   #
   # Parse the RSS feed into text (delete <tags>)
   #
-  titles <- news %>% xml_find_all(".//title") %>% xml_text() %>% as.character()
+  titles       <- news %>% xml_find_all(".//title") %>% xml_text() %>% as.character()
   descriptions <- news %>% xml_find_all(".//description") %>% xml_text() %>% as.character()
-  links <- news %>% xml_find_all(".//link") %>% xml_text() %>% as.character()
-  pubDates <- news %>% xml_find_all(".//pubDate") %>% xml_text() %>% as.character()
+  links        <- news %>% xml_find_all(".//link") %>% xml_text() %>% as.character()
+  pubDates     <- news %>% xml_find_all(".//pubDate") %>% xml_text() %>% as.character()
 
   #
   # Build a data frame
