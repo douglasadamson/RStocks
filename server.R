@@ -1,4 +1,5 @@
 library(shiny)
+library(lubridate)
 source("yahooQuotes.R")
 source("quandlQuotes.R")
 source("plotTicker.R")
@@ -8,14 +9,33 @@ server <- function(input, output) {
   #
   # Reactive Inputs
   #
-  dataInput <- reactive({
-    start = input$dateRange[1]
-    end = input$dateRange[2]
-    if (start > end) {
-      start = end
-      end = input$dateRange[1]
-    }
-    quandl(input$ticker, start, end)
+#  dataInput <- reactive({
+#    start = input$dateRange[1]
+#    end = input$dateRange[2]
+#    if (start > end) {
+#     start = end
+#     end = input$dateRange[1]
+#   }
+#   quandl(input$ticker, start, end)
+# })
+
+  getDays <- function(selection) {
+    days <- switch(as.character(selection),
+           "1" = 30,
+           "2" = 60,
+           "3" = 180,
+           "4" = 365,
+           "5" = 730,
+           "6" = 1825,
+           30)
+    return(days)
+  }
+
+  dataInput2 <- reactive({
+    days <- getDays(input$radio)
+    toDate <- today()
+    fromDate <- toDate - days
+    quandl(input$ticker, fromDate, toDate)
   })
 
   dataQuote <- reactive({
@@ -72,13 +92,15 @@ server <- function(input, output) {
   #
   # Reactive Outputs
   #
-  output$tickerPlot <- renderPlot({plotTicker(input$ticker, dataInput())})
+  output$tickerPlot <- renderPlot({plotTicker(input$ticker, dataInput2())})
 
-  output$volumePlot <- renderPlot({plotVolume(input$ticker, dataInput())})
+  output$volumePlot <- renderPlot({plotVolume(input$ticker, dataInput2())})
 
   output$tickerTable <- renderTable({dataQuote()}, bordered = TRUE, align = 'c', spacing = 's')
 
   output$historicValues <- renderTable({historicQuote()}, bordered = TRUE, align = 'c', spacing = 's')
+
+  output$volumes <- renderTable({volumeTable(input$ticker, dataInput2())}, bordered = TRUE, align = 'c', spacing = 's')
 
   output$compTable <- renderTable({yahooBatch()}, bordered = TRUE, align = 'c', spacing = 'xs', striped = TRUE)
 

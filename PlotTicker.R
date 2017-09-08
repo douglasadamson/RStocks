@@ -26,7 +26,8 @@ plotTicker <- function(ticker, closeValues) {
     geom_line() +
     geom_point(aes(x = Date, y = Close), color = "blue") +
     geom_label_repel(aes(x = Date, y = Close, label = ifelse(Close == maxClose, paste("High:", Close, "\n", Date), "")), show.legend = FALSE) +
-    geom_label_repel(aes(x = Date, y = Close, label = ifelse(Close == minClose, paste("Low: ", Close, "\n", Date), "")), show.legend = FALSE)
+    geom_label_repel(aes(x = Date, y = Close, label = ifelse(Close == minClose, paste("Low: ", Close, "\n", Date), "")), show.legend = FALSE) +
+    geom_hline(yintercept = mean((closeValues$Close)), color = "red", linetype = "dashed")
 
   return(p)
 }
@@ -39,10 +40,17 @@ plotVolume <- function(ticker, closeValues) {
     labs(title = paste(ticker, " Daily Volumes"), x = "", y = "Volume") +
     scale_y_log10() +
     scale_x_date(date_labels = "%b %d, %Y", date_minor_breaks = "1 week") +
-    geom_point() +
-    geom_line()
+    geom_line() +
+    geom_hline(yintercept = mean((closeValues$Volume[])), color = "red", linetype = "dashed")
 
   return(p)
+}
+
+volumeTable <- function(ticker, closeValues) {
+  data_frame("Today" = paste(format(closeValues$Volume[1]/1000000, nsmall = 2, digits = 4), "M", sep = ""),
+             "Average" = paste(format(mean(closeValues$Volume)/1000000, nsmall = 2, digits = 4), "M", sep = ""),
+             "High" = paste(format(max(closeValues$Volume)/1000000, nsmall = 2, digits = 4), "M", sep = ""),
+             "Low" = paste(format(min(closeValues$Volume)/1000000, nsmall = 2, digits = 4), "M", sep = ""))
 }
 
 #
