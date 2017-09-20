@@ -18,13 +18,13 @@ plotTicker <- function(ticker, closeValues) {
   minClose = min(closeValues$Close)
 
   # Create the plot and decorate
-  p <- ggplot(closeValues, aes(Date, Close)) +
+  p <- ggplot(closeValues, aes(Date, Close)) + theme_bw() +
     labs(title = paste(ticker, " Daily Closes"), x = "Date", y = "Closing Price") +
     scale_y_continuous(labels = scales::dollar) +
     scale_x_date(date_labels = "%b %d, %Y", date_minor_breaks = "1 week") +
     scale_color_manual(values = c("red", "blue")) +
     geom_line() +
-    geom_point(aes(x = Date, y = Close), color = "blue") +
+#    geom_point(aes(x = Date, y = Close), color = "blue") +
     geom_label_repel(aes(x = Date, y = Close, label = ifelse(Close == maxClose, paste("High:", Close, "\n", Date), "")), show.legend = FALSE) +
     geom_label_repel(aes(x = Date, y = Close, label = ifelse(Close == minClose, paste("Low: ", Close, "\n", Date), "")), show.legend = FALSE) +
     geom_hline(yintercept = mean((closeValues$Close)), color = "red", linetype = "dashed")
@@ -36,7 +36,7 @@ plotTicker <- function(ticker, closeValues) {
 # Plot Daily Trade Volumes
 #
 plotVolume <- function(ticker, closeValues) {
-  p <- ggplot(closeValues, aes(Date, Volume)) +
+  p <- ggplot(closeValues, aes(Date, Volume)) + theme_bw() +
     labs(title = paste(ticker, " Daily Volumes"), x = "", y = "Volume") +
     scale_y_log10() +
     scale_x_date(date_labels = "%b %d, %Y", date_minor_breaks = "1 week") +

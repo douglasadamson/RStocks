@@ -30,7 +30,7 @@ yahooBatch <- function() {
   sendURL   <- paste(yahooFinanceURL, "?s=", stockList, "&f=", stockArgs, sep = "")
 
   #
-  # Read the data - data contains empty values, so suppress the warnings of parsing failures! Yes, the data has empty fields and I can't fix them
+  # Read the data - data contains random empty values, so suppress the warnings of parsing failures! Yes, the data has empty fields and I can't fix them
   #
   suppressWarnings(
     quotes <- read_csv(sendURL, col_names = yahooDF$Names[1:12], col_types = paste(yahooDF$Types[1:12], collapse = ""), na = c(NA, " ", ""))
@@ -62,10 +62,10 @@ historicYahooQuote <- function(ticker) {
 # Get historic quote for this ticker
 #
 yahooQuote <- function(ticker) {
-  args    <- paste(c("o", "l1", "h", "g"), collapse = "")
-  columns <- c("Open", "Last", "High", "Low")
+  args    <- paste(c("o", "l1", "h", "g", "c1"), collapse = "")
+  columns <- c("Open", "Last", "High", "Low", "Change")
   URL     <- paste(yahooFinanceURL, "?s=", ticker, "&f=", args, sep = "")
-  quote   <- read_csv(URL, col_names = as.vector(columns), col_types = "dddd")
+  quote   <- read_csv(URL, col_names = as.vector(columns), col_types = "ddddd")
   return(quote)
 }
 
